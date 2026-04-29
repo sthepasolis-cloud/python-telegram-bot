@@ -19,7 +19,7 @@ class Settings:
         bot_token = os.getenv("BOT_TOKEN", "").strip()
         if not bot_token or bot_token == "YOUR_TELEGRAM_BOT_TOKEN_HERE":
             raise RuntimeError(
-                "BOT_TOKEN belum diset. Isi file .env untuk lokal atau Variables di Railway."
+                "BOT_TOKEN is not set. Add it to your local .env file or Railway variables."
             )
 
         log_level = os.getenv("LOG_LEVEL", "INFO").strip().upper() or "INFO"

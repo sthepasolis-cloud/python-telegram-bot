@@ -2,19 +2,37 @@
 
 import logging
 
-from telegram import Update
+from telegram import ReplyKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 
 logger = logging.getLogger(__name__)
 
-HELP_TEXT = """Command yang tersedia:
-/start - Mulai bot
-/help - Lihat bantuan
-/about - Info bot
-/ping - Cek status bot
+BOT_COMMANDS = (
+    ("start", "Show the main menu"),
+    ("help", "Show help"),
+    ("about", "Show bot information"),
+    ("ping", "Check bot status"),
+)
 
-Kirim pesan teks biasa, bot akan membalas dengan echo."""
+MENU_HELP = "Help"
+MENU_ABOUT = "About"
+MENU_PING = "Ping"
+
+MAIN_MENU_KEYBOARD = ReplyKeyboardMarkup(
+    [[MENU_HELP, MENU_ABOUT], [MENU_PING]],
+    resize_keyboard=True,
+    is_persistent=True,
+    input_field_placeholder="Choose a menu item",
+)
+
+HELP_TEXT = """Available commands:
+/start - Start the bot
+/help - Show help
+/about - Show bot information
+/ping - Check bot status
+
+Send a normal text message and the bot will echo it back."""
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -24,10 +42,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if message is None:
         return
 
-    name = user.first_name if user and user.first_name else "teman"
+    name = user.first_name if user and user.first_name else "friend"
     await message.reply_text(
-        f"Halo, {name}! Bot sudah aktif.\n\n"
-        "Ketik /help untuk melihat command yang tersedia."
+        f"Hello, {name}! The bot is running.\n\n"
+        "Choose a menu button below or type /help to see the available commands.",
+        reply_markup=MAIN_MENU_KEYBOARD,
     )
 
 
@@ -47,7 +66,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     await message.reply_text(
-        "Bot ini dibuat dengan python-telegram-bot dan siap dideploy ke Railway."
+        "This bot is built with python-telegram-bot and is ready to deploy on Railway."
     )
 
 
@@ -60,13 +79,27 @@ async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await message.reply_text("pong")
 
 
+async def menu_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    message = update.effective_message
+    if message is None or not message.text:
+        return
+
+    text = message.text.strip()
+    if text == MENU_HELP:
+        await help_command(update, context)
+    elif text == MENU_ABOUT:
+        await about(update, context)
+    elif text == MENU_PING:
+        await ping(update, context)
+
+
 async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     del context
     message = update.effective_message
     if message is None or not message.text:
         return
 
-    await message.reply_text(f"Kamu mengirim:\n{message.text}")
+    await message.reply_text(f"You sent:\n{message.text}")
 
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -75,16 +108,20 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if message is None:
         return
 
-    await message.reply_text("Command belum tersedia. Ketik /help untuk bantuan.")
+    await message.reply_text("Unknown command. Type /help for assistance.")
 
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logger.exception("Error saat memproses update: %s", update, exc_info=context.error)
+    logger.exception("Error while processing update: %s", update, exc_info=context.error)
 
     if isinstance(update, Update) and update.effective_message:
         await update.effective_message.reply_text(
-            "Maaf, terjadi error saat memproses pesan."
+            "Sorry, an error occurred while processing your message."
         )
+
+
+async def set_bot_commands(application: Application) -> None:
+    await application.bot.set_my_commands(BOT_COMMANDS)
 
 
 def register_handlers(application: Application) -> None:
@@ -93,4 +130,7 @@ def register_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("about", about))
     application.add_handler(CommandHandler("ping", ping))
     application.add_handler(MessageHandler(filters.COMMAND, unknown_command))
+    application.add_handler(
+        MessageHandler(filters.Regex(f"^({MENU_HELP}|{MENU_ABOUT}|{MENU_PING})$"), menu_button)
+    )
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo_message))

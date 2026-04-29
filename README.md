@@ -6,12 +6,35 @@ A starter Telegram bot project built with [`python-telegram-bot`](https://python
 
 ## Features
 
+- Persistent chat menu buttons after `/start`
 - `/start`, `/help`, `/about`, and `/ping` commands
 - Echo replies for normal text messages
 - Fallback handler for unknown commands
 - Error logging
 - Bot token loaded from a local `.env` file or Railway variables
 - Ready to run with Docker and Railway
+
+## Chat Menu Buttons
+
+The bot shows a persistent reply keyboard after `/start` with these buttons:
+
+| Button  | Action                           |
+| ------- | -------------------------------- |
+| `Help`  | Show available commands          |
+| `About` | Show short bot information       |
+| `Ping`  | Check whether the bot is running |
+
+Telegram bots cannot display custom buttons before a user starts or messages the bot. The keyboard appears after the bot replies, then stays available in supported Telegram clients.
+
+## Bot Commands
+
+| Command  | Description                      |
+| -------- | -------------------------------- |
+| `/start` | Show the welcome message         |
+| `/help`  | Show available commands          |
+| `/about` | Show short bot information       |
+| `/ping`  | Check whether the bot is running |
+
 
 ## Project Structure
 
@@ -45,15 +68,6 @@ A starter Telegram bot project built with [`python-telegram-bot`](https://python
 | ----------- | -------- | ------- | -------------------------------------------------- |
 | `BOT_TOKEN` | Yes      | -       | Bot token from `@BotFather`                        |
 | `LOG_LEVEL` | No       | `INFO`  | Logging level, such as `DEBUG`, `INFO`, or `ERROR` |
-
-## Bot Commands
-
-| Command  | Description                      |
-| -------- | -------------------------------- |
-| `/start` | Show the welcome message         |
-| `/help`  | Show available commands          |
-| `/about` | Show short bot information       |
-| `/ping`  | Check whether the bot is running |
 
 ## Install and Run Locally
 
