@@ -1,6 +1,6 @@
 # Telegram Bot with python-telegram-bot
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/python-telegram-bot?utm_medium=integration&utm_source=button&utm_campaign=telegram-bot)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/python-telegram-bot?referralCode=asepsp&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 A starter Telegram bot project built with [`python-telegram-bot`](https://python-telegram-bot.org/), environment-based configuration, Docker support, and Railway deployment setup.
 
