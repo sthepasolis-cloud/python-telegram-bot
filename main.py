@@ -1,10 +1,11 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 import logging
-
+   import os
+   TOKEN = os.getenv("BOT_TOKEN")
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = "8989530149:AAEnf1XfwSIqptpXcHJuxFct0uEur9cz96k"
+   TOKEN = "8595880149:AAEW1Fs7sgINrtLcVxauEcFxtfEdwE3cr90k"
 CHAT_ID = 1176232388
 AUTHORIZED_USERS = {5992488770}
 
