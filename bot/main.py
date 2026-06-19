@@ -4,17 +4,17 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = os.getenv("TOKEN")
 
-# PEGA TU ID REAL AQUÍ - sácalo con @userinfobot
+# 1. PON TU ID REAL AQUÍ - lo sacas con @userinfobot
 IDS_AUTORIZADOS = [3992448770]
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
+    u = update.effective_user
 
     if user_id not in IDS_AUTORIZADOS:
         await update.message.reply_text("❌ Usuario no registrado")
         return
 
-    u = update.effective_user
     texto = f"""✅ Usuario autorizado
 
 Nombre: {u.first_name}
@@ -31,9 +31,10 @@ async def cuentas(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Usuario no registrado")
         return
 
-    texto = """📋 Cuentas:
-1. Premium - Activa
-2. Free - Expiró
+    texto = """📋 Cuentas disponibles:
+1. Cuenta Premium - Activa
+2. Cuenta Free - Expiró
+3. Cuenta Test - Activa
 """
     await update.message.reply_text(texto, parse_mode="Markdown")
 
@@ -41,5 +42,5 @@ if __name__ == "__main__":
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("cuentas", cuentas))
-    print("Bot iniciado sin botones")
+    print("Bot iniciado")
     app.run_polling()
