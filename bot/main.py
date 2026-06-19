@@ -1,45 +1,30 @@
-"""Entrypoint for the Telegram bot."""
+   import os
+   import logging
+   from telegram import Update, ReplyKeyboardMarkup
+   from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 
-import logging
+   TOKEN = os.getenv("TOKEN")
+   logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-from telegram import Update
-from telegram.ext import Application, ApplicationBuilder
+   async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+       keyboard = [['Hola', 'Ayuda'], ['Ping']]
+       reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+       await update.message.reply_text('¡Bot 24/7 activo! Elige una opción:', reply_markup=reply_markup)
 
-from bot.config import Settings
-from bot.handlers import error_handler, register_handlers, set_bot_commands
+   async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+       await update.message.reply_text('Comandos: /start - /help - /ping')
 
+   async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
+       await update.message.reply_text('Pong! Bot funcionando 24/7')
 
-logger = logging.getLogger(__name__)
+   async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+       await update.message.reply_text(f'Tú dijiste: {update.message.text}')
 
-
-def configure_logging(level_name: str) -> None:
-    level = getattr(logging, level_name, logging.INFO)
-    logging.basicConfig(
-        format="%(asctime)s %(name)s [%(levelname)s] %(message)s",
-        level=level,
-    )
-
-
-def build_application(settings: Settings) -> Application:
-    application = (
-        ApplicationBuilder()
-        .token(settings.bot_token)
-        .post_init(set_bot_commands)
-        .build()
-    )
-    register_handlers(application)
-    application.add_error_handler(error_handler)
-    return application
-
-
-def main() -> None:
-    settings = Settings.from_env()
-    configure_logging(settings.log_level)
-
-    application = build_application(settings)
-    logger.info("Bot is running with polling.")
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
-
-
-if __name__ == "__main__":
-    main()
+   if __name__ == '__main__':
+       app = ApplicationBuilder().token(TOKEN).build()
+       app.add_handler(CommandHandler("start", start))
+       app.add_handler(CommandHandler("help", help_command))
+       app.add_handler(CommandHandler("ping", ping))
+       app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+       print("Bot iniciado...")
+       app.run_polling()
