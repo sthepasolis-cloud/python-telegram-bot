@@ -5,7 +5,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 TOKEN = os.getenv("TOKEN")
 
 # PON AQUÍ TU ID DE TELEGRAM
-IDS_AUTORIZADOS = [12345678[5992488770] # Reemplaza 123456789 por tu ID
+IDS_AUTORIZADOS = [5992488770] # Reemplaza 123456789 por tu ID
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
