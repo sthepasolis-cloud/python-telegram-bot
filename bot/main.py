@@ -1,30 +1,51 @@
-   import os
-   import logging
-   from telegram import Update, ReplyKeyboardMarkup
-   from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+import os
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-   TOKEN = os.getenv("TOKEN")
-   logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+TOKEN = os.getenv("TOKEN")
 
-   async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-       keyboard = [['Hola', 'Ayuda'], ['Ping']]
-       reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-       await update.message.reply_text('¡Bot 24/7 activo! Elige una opción:', reply_markup=reply_markup)
+# PON AQUÍ TU ID DE TELEGRAM
+IDS_AUTORIZADOS = [12345678[5992488770] # Reemplaza 123456789 por tu ID
 
-   async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-       await update.message.reply_text('Comandos: /start - /help - /ping')
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
 
-   async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
-       await update.message.reply_text('Pong! Bot funcionando 24/7')
+    if user_id not in IDS_AUTORIZADOS:
+        await update.message.reply_text("❌ Usuario no autorizado")
+        return
 
-   async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-       await update.message.reply_text(f'Tú dijiste: {update.message.text}')
+    user = update.effective_user
+    texto = f"""✅ **Usuario autorizado**
 
-   if __name__ == '__main__':
-       app = ApplicationBuilder().token(TOKEN).build()
-       app.add_handler(CommandHandler("start", start))
-       app.add_handler(CommandHandler("help", help_command))
-       app.add_handler(CommandHandler("ping", ping))
-       app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
-       print("Bot iniciado...")
-       app.run_polling()
+**Nombre:** {user.first_name} {user.last_name or ''}
+**Username:** @{user.username or 'Sin username'}
+**ID:** `{user.id}`
+**Chat ID:** `{update.effective_chat.id}`
+"""
+    await update.message.reply_text(texto, parse_mode="Markdown")
+
+async def cuentas(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    if user_id not in IDS_AUTORIZADOS:
+        await update.message.reply_text("❌ Usuario no autorizado")
+        return
+
+    # Aquí pones las cuentas que quieras mostrar
+    texto = """📋 **Cuentas disponibles:**
+
+1. Cuenta Premium - Activa
+2. Cuenta Free - Expiró
+3. Cuenta Test - Activa
+"""
+    await update.message.reply_text(texto, parse_mode="Markdown")
+
+def main():
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("cuentas", cuentas))
+    print("Bot iniciado")
+    app.run_polling()
+
+if __name__ == "__main__":
+    app.run_polling()
