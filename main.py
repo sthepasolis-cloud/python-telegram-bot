@@ -5,7 +5,7 @@ import logging
    TOKEN = os.getenv("BOT_TOKEN")
 logging.basicConfig(level=logging.INFO)
 
-   TOKEN = "8557061632:AAE2_1eFKKASb6t4h8tjwkRKaJ9OdgFxBpI"
+   TOKEN = "8557061632:AAFUX-p5TLM2Uf2mIbwRADugatjTZuw9I1o"
 CHAT_ID = 1176232388
 AUTHORIZED_USERS = {5992488770}
 
